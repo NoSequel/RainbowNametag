@@ -50,7 +50,7 @@ public class NameTagManager {
 
     public void resetNameTag(Player player, Player other) {
         if (player != null && other != null && !player.equals(other)) {
-            Objective objective = player.getScoreboard().getObjective(DisplaySlot.BELOW_NAME);
+            final Objective objective = player.getScoreboard().getObjective(DisplaySlot.BELOW_NAME);
 
             if (objective != null) objective.unregister();
 

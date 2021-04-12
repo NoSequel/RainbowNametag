@@ -25,7 +25,7 @@ public class NameTagCommand implements CommandExecutor {
             return false;
         }
 
-        Player player = (Player) sender;
+        final Player player = (Player) sender;
 
         if (!player.hasPermission("rainbow.command.nametag")) {
             player.sendMessage(NO_PERMISSION);
@@ -33,7 +33,7 @@ public class NameTagCommand implements CommandExecutor {
         }
 
         if (args.length == 0) {
-            RainbowNameTag rainbowNameTag = NameTagPlugin.getInstance().getNametagManager().getPlayerRainbowMap().get(player);
+            final RainbowNameTag rainbowNameTag = NameTagPlugin.getInstance().getNametagManager().getPlayerRainbowMap().get(player);
 
             if (rainbowNameTag.isActive()) {
                 rainbowNameTag.stopProcess();

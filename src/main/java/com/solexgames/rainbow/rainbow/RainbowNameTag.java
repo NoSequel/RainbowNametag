@@ -31,7 +31,7 @@ public class RainbowNameTag {
     public void startProcess() {
         this.rainbowIterator = new RainbowIterator();
         this.rainbowRunnable = () -> {
-            ChatColor chatColor = this.rainbowIterator.iterateAndGet();
+            final ChatColor chatColor = this.rainbowIterator.iterateAndGet();
 
             player.setPlayerListName(chatColor + player.getName());
 
