@@ -41,12 +41,11 @@ public class NameTagCommand implements CommandExecutor {
         final Player player = (Player) sender;
         final RainbowNameTag rainbowNameTag = plugin.getNametagManager().getPlayerRainbowMap().get(player);
         final String message = rainbowNameTag.isActive()
-                ? ChatColor.translateAlternateColorCodes('&', plugin.getDisabledNameTags())
-                : ChatColor.translateAlternateColorCodes('&', plugin.getEnabledNameTags());
+                ? plugin.getDisabledNameTags()
+                : plugin.getEnabledNameTags();
 
         rainbowNameTag.toggle();
-        player.sendMessage(message);
-
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
 
         return true;
     }
