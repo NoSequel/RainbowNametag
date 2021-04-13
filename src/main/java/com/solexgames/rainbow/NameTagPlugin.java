@@ -14,20 +14,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 @Getter
 public final class NameTagPlugin extends JavaPlugin {
 
-    @Getter
-    private static NameTagPlugin instance;
-
     private NameTagManager nametagManager;
 
     private long iterateTime = 35L;
 
     private String enabledNameTags;
-    private String disabledNameTags;
+    private String disabledNameTags; // why is this in the main class????
 
     @Override
     public void onEnable() {
-        instance = this;
-
         this.saveDefaultConfig();
 
         this.iterateTime = this.getConfig().getLong("iterate-time");
@@ -37,7 +32,7 @@ public final class NameTagPlugin extends JavaPlugin {
 
         this.nametagManager = new NameTagManager();
 
-        this.getCommand("nametag").setExecutor(new NameTagCommand());
-        this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+        this.getCommand("nametag").setExecutor(new NameTagCommand(this));
+        this.getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
     }
 }

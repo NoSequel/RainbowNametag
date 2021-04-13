@@ -15,35 +15,39 @@ import org.bukkit.entity.Player;
 
 public class NameTagCommand implements CommandExecutor {
 
-    protected final String ONLY_PLAYERS = ChatColor.RED + "Only players can execute this command.";
-    protected final String NO_PERMISSION = ChatColor.RED + "I'm sorry, but you do not have permission to perform this command.";
+    private final NameTagPlugin plugin;
+
+    /**
+     * Constructor to make a new nametag command
+     *
+     * @param plugin the plugin the command is registered to
+     */
+    public NameTagCommand(NameTagPlugin plugin) {
+        this.plugin = plugin;
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ONLY_PLAYERS);
+            sender.sendMessage(ChatColor.RED + "Only players can execute this command.");
+            return false;
+        }
+
+        if (!sender.hasPermission("rainbow.command.nametag")) {
+            sender.sendMessage("I'm sorry, but you do not have permission to perform this command.");
             return false;
         }
 
         final Player player = (Player) sender;
+        final RainbowNameTag rainbowNameTag = plugin.getNametagManager().getPlayerRainbowMap().get(player);
+        final String message = rainbowNameTag.isActive()
+                ? ChatColor.translateAlternateColorCodes('&', plugin.getDisabledNameTags())
+                : ChatColor.translateAlternateColorCodes('&', plugin.getEnabledNameTags());
 
-        if (!player.hasPermission("rainbow.command.nametag")) {
-            player.sendMessage(NO_PERMISSION);
-            return false;
-        }
+        rainbowNameTag.toggle();
+        player.sendMessage(message);
 
-        if (args.length == 0) {
-            final RainbowNameTag rainbowNameTag = NameTagPlugin.getInstance().getNametagManager().getPlayerRainbowMap().get(player);
 
-            if (rainbowNameTag.isActive()) {
-                rainbowNameTag.stopProcess();
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&', NameTagPlugin.getInstance().getDisabledNameTags()));
-            } else {
-                rainbowNameTag.startProcess();
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&', NameTagPlugin.getInstance().getEnabledNameTags()));
-            }
-        }
-
-        return false;
+        return true;
     }
 }

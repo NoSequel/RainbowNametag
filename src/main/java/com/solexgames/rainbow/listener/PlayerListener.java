@@ -15,14 +15,22 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class PlayerListener implements Listener {
 
-    @EventHandler(
-            priority = EventPriority.LOWEST
-    )
+    private final NameTagPlugin plugin;
+
+    /**
+     * Constructor to make a new player listener object
+     *
+     * @param plugin the plugin it's registered to
+     */
+    public PlayerListener(NameTagPlugin plugin) {
+        this.plugin = plugin;
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
-        final NameTagPlugin nametagPlugin = NameTagPlugin.getInstance();
-        final RainbowNameTag rainbowNametag = new RainbowNameTag(player);
+        final RainbowNameTag rainbowNametag = new RainbowNameTag(player, plugin);
 
-        nametagPlugin.getNametagManager().getPlayerRainbowMap().put(player, rainbowNametag);
+        plugin.getNametagManager().getPlayerRainbowMap().put(player, rainbowNametag);
     }
 }

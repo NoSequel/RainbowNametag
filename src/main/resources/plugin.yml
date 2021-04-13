@@ -1,4 +1,3 @@
-
 name: RainbowNametags
 version: 1.0
 main: com.solexgames.rainbow.NameTagPlugin
@@ -6,4 +5,4 @@ main: com.solexgames.rainbow.NameTagPlugin
 commands:
   nametag:
     aliases: ["rainbow", "rainbownametags"]
-    description: Starts, or stops the rainbow nametag above your head and in tab!
+    description: Toggles the rainbow nametag above your head and in tab!

@@ -2,55 +2,58 @@ package com.solexgames.rainbow.rainbow;
 
 import com.solexgames.rainbow.NameTagPlugin;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
-
-/**
- * An object to setup rainbow name-tags for users, and update them for every player.
- * <p>
- *
- * @author GrowlyX
- * @since 4/12/2021
- */
+import org.bukkit.scheduler.BukkitRunnable;
 
 @Getter
-@RequiredArgsConstructor
-public class RainbowNameTag {
+public class RainbowNameTag extends BukkitRunnable {
 
     private final Player player;
+    private final NameTagPlugin plugin;
 
-    private RainbowIterator rainbowIterator;
-    private Runnable rainbowRunnable;
-    private BukkitTask rainbowTask;
+    private final ChatColor[] colors = new ChatColor[] {
+            ChatColor.DARK_RED, ChatColor.RED, ChatColor.GOLD,
+            ChatColor.YELLOW, ChatColor.GREEN, ChatColor.DARK_GREEN,
+            ChatColor.AQUA, ChatColor.DARK_AQUA, ChatColor.BLUE, ChatColor.DARK_BLUE
+    };
 
-    private boolean active;
+    private ChatColor currentColor = colors[0];
+    private boolean active = false;
 
-    public void startProcess() {
-        this.rainbowIterator = new RainbowIterator();
-        this.rainbowRunnable = () -> {
-            final ChatColor chatColor = this.rainbowIterator.iterateAndGet();
-
-            player.setPlayerListName(chatColor + player.getName());
-
-            Bukkit.getOnlinePlayers().forEach(otherPlayer -> NameTagPlugin.getInstance().getNametagManager().setupNameTag(this.player, otherPlayer, chatColor));
-        };
-        this.rainbowTask = Bukkit.getScheduler().runTaskTimer(NameTagPlugin.getInstance(), this.rainbowRunnable, 20L, 35L);
-
-        this.active = true;
+    /**
+     * Constructor to make a new rainbow
+     *
+     * @param player the player the nametag is for
+     */
+    public RainbowNameTag(Player player, NameTagPlugin plugin) {
+        this.player = player;
+        this.plugin = plugin;
     }
 
-    public void stopProcess() {
-        this.rainbowTask.cancel();
-        this.rainbowIterator = null;
-        this.rainbowRunnable = null;
+    /**
+     * Toggle the status of the runnable
+     */
+    public void toggle() {
+        if(this.active) {
+            this.active = false;
+            this.cancel();
+        } else {
+            this.active = true;
+            this.runTaskTimer(plugin, 0L, this.plugin.getIterateTime());
+        }
+    }
 
-        this.player.setPlayerListName(this.player.getName());
+    @Override
+    public void run() {
+        final int ordinal = this.currentColor.ordinal();
+        final ChatColor color = (this.currentColor = colors[ordinal >= colors.length ? 0 : ordinal + 1]);
 
-        Bukkit.getOnlinePlayers().forEach(otherPlayer -> NameTagPlugin.getInstance().getNametagManager().resetNameTag(this.player, otherPlayer));
+        player.setPlayerListName(color + player.getName());
 
-        this.active = false;
+        for (Player target : Bukkit.getOnlinePlayers()) {
+            plugin.getNametagManager().setupNameTag(player, target, color);
+        }
     }
 }
