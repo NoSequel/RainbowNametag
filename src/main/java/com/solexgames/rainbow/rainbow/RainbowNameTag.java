@@ -38,9 +38,12 @@ public class RainbowNameTag extends BukkitRunnable {
     public void toggle() {
         if(this.active) {
             this.active = false;
+            this.currentColor = this.colors[0];
+
             this.cancel();
         } else {
             this.active = true;
+
             this.runTaskTimer(plugin, 0L, this.plugin.getIterateTime());
         }
     }
